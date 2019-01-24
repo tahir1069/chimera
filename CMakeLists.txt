@@ -9,6 +9,18 @@ set(SHARE_INSTALL_DIR "share/${PROJECT_NAME}")
 ## SETUP ##
 ###########
 
+# Chimera version
+set(CHIMERA_MAJOR_VERSION "0")
+set(CHIMERA_MINOR_VERSION "1")
+set(CHIMERA_PATCH_VERSION "0")
+set(CHIMERA_VERSION
+  ${CHIMERA_MAJOR_VERSION}.${CHIMERA_MINOR_VERSION}.${CHIMERA_PATCH_VERSION}
+)
+
+# Preset for code formatting
+include(ClangFormat)
+clang_format_setup()
+
 ## Find necessary packages.
 find_package(LLVM REQUIRED CONFIG)
 include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
@@ -70,6 +82,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 # Set headers and sources
 set(${PROJECT_NAME}_HEADERS
   include/chimera/binding.h
+  include/chimera/chimera.h
   include/chimera/configuration.h
   include/chimera/consumer.h
   include/chimera/frontend_action.h
@@ -99,30 +112,42 @@ llvm_map_components_to_libnames(llvm_libs
 # Build the external tools: Mustache and Cling.
 add_subdirectory(external)
 
-# Build the main chimera executable.
-add_executable("${PROJECT_NAME}"
+# Build the chimera library.
+add_library(libchimera
   ${${PROJECT_NAME}_HEADERS}  # not required, but helpful for some IDEs
   ${${PROJECT_NAME}_SOURCES}
 )
-
-target_compile_options("${PROJECT_NAME}"
-  PUBLIC "-std=c++11"
+target_compile_options(libchimera PUBLIC "-std=c++11")
+target_link_libraries(libchimera
+  PRIVATE
+    ${YAMLCPP_LIBRARIES}
+    ${CLANG_LIBS}
+    ${llvm_libs}
 )
-
-target_link_libraries("${PROJECT_NAME}"
-  ${YAMLCPP_LIBRARIES}
-  ${CLANG_LIBS}
-  ${llvm_libs}
+target_link_libraries(libchimera PRIVATE mstch cling_utils)
+target_link_libraries(libchimera PRIVATE chimera_bindings)
+target_compile_definitions(libchimera
+  PUBLIC
+    CHIMERA_MAJOR_VERSION=${CHIMERA_MAJOR_VERSION}
+    CHIMERA_MINOR_VERSION=${CHIMERA_MINOR_VERSION}
+    CHIMERA_PATCH_VERSION=${CHIMERA_PATCH_VERSION}
+    CHIMERA_VERSION=${CHIMERA_VERSION}
 )
+clang_format_add_sources(${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_SOURCES})
 
-target_link_libraries("${PROJECT_NAME}"
-  mstch
-  cling_utils
-)
+# Build the main chimera executable.
+add_executable(chimera src/chimera_main.cpp)
+target_link_libraries(chimera PUBLIC libchimera)
+clang_format_add_sources(src/chimera_main.cpp)
 
 # Generate built-in template bindings for supported languages.
 add_subdirectory(bindings)
-target_link_libraries(chimera chimera_bindings)
+
+# Add main sources for code formatting
+clang_format_add_sources(
+  ${${PROJECT_NAME}_HEADERS}
+  ${${PROJECT_NAME}_SOURCES}
+)
 
 #############
 ## INSTALL ##
@@ -152,8 +177,12 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
 )
 
 # Enable unit testing by including the `test` subdirectory.
-option(BUILD_TESTING "Enable generation of Chimera build tests." ON)
-if(BUILD_TESTING)
-  enable_testing()
-  add_subdirectory(test)
-endif()
+enable_testing()
+add_subdirectory(test EXCLUDE_FROM_ALL)
+
+#####################
+## CODE FORMATTING ##
+#####################
+
+# Define 'format' and 'check-format' targets
+clang_format_add_targets()
