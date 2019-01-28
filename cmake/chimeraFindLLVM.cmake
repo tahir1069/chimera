@@ -30,6 +30,10 @@ else()
 
 endif()
 
+message(STATUS "")
+message(STATUS "[DEBUG] LLVM_VERSION: ${LLVM_VERSION}")
+message(STATUS "")
+
 # Check if LLVM is compatible with Chimera
 set(COMPATIBLE_LLVM_VERSIONS 3.6 3.9 6.0)
 set(LLVM_VERSION_MAJOR_MINOR ${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR})
