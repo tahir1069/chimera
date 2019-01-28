@@ -8,6 +8,10 @@ fi
 mkdir build
 cd build
 
+# [DEBUG]
+test -e ${LLVM_VERSION} && echo file exists || echo file not found
+find /usr -name ClangConfig.cmake
+
 if [ $BUILD_NAME = TRUSTY_GCC_DEBUG ]; then
   cmake "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}" "-DLLVM_DIR=${LLVM_DIR}" "-DCODECOV=ON" ..
 else
