@@ -26,7 +26,7 @@ include(chimeraFindLLVM)
 include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-find_package(Clang REQUIRED)
+find_package(Clang ${LLVM_VERSION_MAJOR_MINOR} REQUIRED)
 include_directories(SYSTEM ${CLANG_INCLUDE_DIRS})
 add_definitions(${CLANG_DEFINITIONS})
 
