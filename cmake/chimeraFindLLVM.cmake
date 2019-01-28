@@ -34,14 +34,14 @@ endif()
 set(COMPATIBLE_LLVM_VERSIONS 3.6 3.9 6.0)
 set(FOUND_COMPATIBLE_LLVM FALSE)
 foreach(version ${COMPATIBLE_LLVM_VERSIONS})
-  if (${LLVM_VERSION} VERSION_EQUAL ${version})
+  if (${version} VERSION_EQUAL ${LLVM_VERSION})
     set(FOUND_COMPATIBLE_LLVM TRUE)
     break()
   endif()
 endforeach()
 if(NOT FOUND_COMPATIBLE_LLVM)
-    message(FATAL_ERROR "Found LLVM ${LLVM_VERSION}, but it's not compatible \
-      with Chimera. Please build Chimera with one of following LLVM \
-      versions: ${COMPATIBLE_LLVM_VERSIONS}"
-    )
+  message(FATAL_ERROR "Found LLVM ${LLVM_VERSION}, but it's not compatible \
+    with Chimera. Please build Chimera with one of following LLVM \
+    versions: ${COMPATIBLE_LLVM_VERSIONS}"
+  )
 endif()
