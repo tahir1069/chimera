@@ -32,9 +32,10 @@ endif()
 
 # Check if LLVM is compatible with Chimera
 set(COMPATIBLE_LLVM_VERSIONS 3.6 3.9 6.0)
+set(LLVM_VERSION_MAJOR_MINOR ${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR})
 set(FOUND_COMPATIBLE_LLVM FALSE)
 foreach(version ${COMPATIBLE_LLVM_VERSIONS})
-  if (${version} VERSION_EQUAL ${LLVM_VERSION})
+  if (${LLVM_VERSION_MAJOR_MINOR} VERSION_EQUAL ${version})
     set(FOUND_COMPATIBLE_LLVM TRUE)
     break()
   endif()
