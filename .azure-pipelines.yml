@@ -10,7 +10,7 @@ jobs:
     COMPILER: gcc
     BUILD_TYPE: Debug
     BUILD_DIR: $(Build.SourcesDirectory)
-    LLVM_VERSION: 3.8
+    LLVM_VERSION: 3.9
     PYTHON_VERSION: 3.5
     SUDO: sudo
   steps:
@@ -24,7 +24,7 @@ jobs:
     COMPILER: gcc
     BUILD_TYPE: Release
     BUILD_DIR: $(Build.SourcesDirectory)
-    LLVM_VERSION: 3.8
+    LLVM_VERSION: 3.9
     PYTHON_VERSION: 3.5
     SUDO: sudo
   steps:
