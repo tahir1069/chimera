@@ -46,7 +46,7 @@ matrix:
         - BUILD_NAME=XENIAL_GCC_RELEASE
         - BUILD_TYPE=Release
         - COMPILER=GCC
-        - LLVM_VERSION=3.6
+        - LLVM_VERSION=3.8
         - PYTHON_VERSION=3.5
         - DOCKERFILE="Dockerfile.ubuntu-xenial"
       services: docker
